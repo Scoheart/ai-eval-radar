@@ -6,6 +6,7 @@ AI 能力评测相关资料的独立归档：Benchmark、Agent/Coding/Skill 评�
 | 路径 | 内容 |
 | --- | --- |
 | `topics/eval/` | 「AI 前沿追踪」群里能力评测 Agent 整理的评测资料，每天一份，每条含标题、来源（网页/文档，或「据 X 上的报道」）、原文链接、要点、摘要、启示、标签。共 24 条（2026-10-24 至 10-27），取自 [Scoheart/ai-radar](https://github.com/Scoheart/ai-radar) 的 `eval` 主题 |
+| `digests/` | 能力评测每日长文摘要（10-24、10-26、10-27），按主题分段、一条一行并附链接，与 `topics/eval/` 是同一批发现的另一种读法 |
 | `related/<主题>/` | 其他主题（skills、code-review、knowledge-base、memory）里同样涉及评测、Benchmark、榜单的条目，按原日期分文件，标题、来源和链接保持原样 |
 | `projects/swe-together-leaderboard-replica/` | 复刻 SWE-Together 排行榜与 Skill 榜、单任务页（HTML、PNG、SVG，中英文）及生成数据。图里的任务运行数据是演示数据，不是真实评测结果 |
 | `projects/swe-together-formulas/` | SWE-Together 指标公式图（含中英文版本） |
