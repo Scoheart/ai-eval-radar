@@ -5,7 +5,9 @@ AI 能力评测相关资料的独立归档：Benchmark、Agent/Coding/Skill 评�
 ## 目录
 | 路径 | 内容 |
 | --- | --- |
+| `skills-eval/` | **Skills 评测专题**：把所有 Skill 评测相关来源（基准、触发与路由、评测工具、综述、安全检测、评测可信度、X 动态、我们自己的 Skill 榜产出）按类别汇总成索引，每条标注链接和归档位置 |
 | `topics/eval/` | 「AI 前沿追踪」群里能力评测 Agent 整理的评测资料，每天一份，每条含标题、来源（网页/文档，或「据 X 上的报道」）、原文链接、要点、摘要、启示、标签。共 24 条（2026-10-24 至 10-27），取自 [Scoheart/ai-radar](https://github.com/Scoheart/ai-radar) 的 `eval` 主题 |
+| `skills-eval/` | Skills 评测专题目录：把所有 Skill 评测相关的基准、论文、工具、官方文章和 X 动态按「有没有用、会不会被触发、安不安全」分类，附链接和本仓库内的归档位置 |
 | `digests/` | 能力评测每日长文摘要（10-24、10-26、10-27），按主题分段、一条一行并附链接，与 `topics/eval/` 是同一批发现的另一种读法 |
 | `related/<主题>/` | 其他主题（skills、code-review、knowledge-base、memory）里同样涉及评测、Benchmark、榜单的条目，按原日期分文件，标题、来源和链接保持原样 |
 | `projects/swe-together-leaderboard-replica/` | 复刻 SWE-Together 排行榜与 Skill 榜、单任务页（HTML、PNG、SVG，中英文）及生成数据。图里的任务运行数据是演示数据，不是真实评测结果 |
