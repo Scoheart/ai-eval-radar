@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#F4F5F7}
+body{font-family:Inter,"Noto Sans SC",sans-serif;color:#111827;padding:48px;width:1200px}
+.card{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);padding:44px 52px 36px}
+h1{font-size:26px;font-weight:600;letter-spacing:-.015em}
+.sub{margin-top:8px;font-size:13.5px;color:#6B7280;line-height:1.6}
+table{width:100%;border-collapse:collapse;margin-top:22px}
+td{vertical-align:middle;height:76px;border-top:1px solid #F0F1F3}
+tr.sec td{height:auto;border-top:none;padding:26px 0 8px;font-size:11px;font-weight:600;letter-spacing:.12em;color:#9CA3AF}
+tr.sec:first-child td{padding-top:4px}
+tr.sec + tr td{border-top:1px solid #E5E7EB}
+.n{width:220px;font-size:15px;font-weight:600}
+.n small{display:block;font-size:12px;font-weight:400;color:#9CA3AF;margin-top:3px}
+.f{font-size:17.5px;padding-left:8px}
+.t{font-size:15px;color:#374151;padding-left:8px}
+.d{width:320px;font-size:13px;color:#6B7280;text-align:right;line-height:1.55}
+.hl .n{color:#2563EB}
+.foot{margin-top:26px;padding-top:16px;border-top:1px solid #F0F1F3;display:flex;justify-content:space-between;font-size:12px;color:#9CA3AF}
+</style></head><body><div class="card">
+<h1>SWE-Together 评测指标</h1>
+<div class="sub">任务 \(t\) · 复现 \(r\) · 共 \(N=109\) 题 · 每题 \(k=2\) 次复现 · 通过阈值 \(\tau=0.85\) · 所有指标按题等权平均</div>
+<table>
+<tr class="sec"><td colspan="3">评分清单裁判 · 每次复现</td></tr>
+<tr><td class="n">Judge score</td><td class="f">\(\displaystyle j_{t,r}=\mathrm{round}\Big(\sum_g w_g\,\mathbb{I}[\,g\ \text{met}\,],\,2\Big)\)</td><td class="d">冻结的任务评分清单，目标 \(g\)<br>权重 \(\sum_g w_g=1\)，\(j\in[0,1]\)</td></tr>
+<tr><td class="n">Success</td><td class="f">\(\displaystyle s_{t,r}=\mathbb{I}[\,j_{t,r}\ge\tau\,]\)</td><td class="d">\(j\ge0.85\) 记 1，否则记 0</td></tr>
+
+<tr class="sec"><td colspan="3">每道题 · \(k\) 次复现内平均</td></tr>
+<tr><td class="n">\(\bar{j}_t\)</td><td class="f">\(\displaystyle \bar{j}_t=\frac{1}{k}\sum_{r=1}^{k} j_{t,r}\)</td><td class="d">用于 SSR 与 Mean judge</td></tr>
+<tr><td class="n">\(\bar{s}_t\)</td><td class="f">\(\displaystyle \bar{s}_t=\frac{1}{k}\sum_{r=1}^{k} s_{t,r}\)</td><td class="d">\(k=2\) 时取 0 / 0.5 / 1，用于 pass@1</td></tr>
+
+<tr class="sec"><td colspan="3">正确性指标 · 跨 \(N\) 题平均</td></tr>
+<tr class="hl"><td class="n">pass@1 ↑</td><td class="f">\(\displaystyle \frac{1}{N}\sum_{t=1}^{N}\bar{s}_t\)</td><td class="d">单次复现跑通的概率</td></tr>
+<tr class="hl"><td class="n">pass² ↑</td><td class="f">\(\displaystyle \frac{1}{N}\sum_{t=1}^{N}\prod_{r=1}^{2} s_{t,r}\)</td><td class="d">两次复现都必须通过<br>\(\mathrm{pass}^2\le\mathrm{pass@1}\)</td></tr>
+<tr><td class="n">SSR ↑</td><td class="f">\(\displaystyle \frac{1}{N}\sum_{t=1}^{N}\mathbb{I}[\,\bar{j}_t\ge\tau\,]\)</td><td class="d">先平均裁判分，再卡阈值</td></tr>
+<tr><td class="n">Mean judge ↑</td><td class="f">\(\displaystyle \frac{1}{N}\sum_{t=1}^{N}\bar{j}_t\)</td><td class="d">不设阈值，论文表 2 按此排名</td></tr>
+
+<tr class="sec"><td colspan="3">用户模拟行为</td></tr>
+<tr class="hl"><td class="n">U-Corr ↓</td><td class="f">\(\displaystyle N_{\text{correction}}+0.2\,N_{\text{nudge}}\)</td><td class="d">每次复现计一次；先复现内平均，再跨题平均<br>明确纠正 ×1，暗示 ×0.2</td></tr>
+<tr><td class="n">Intent Coverage</td><td class="f">\(\displaystyle \mathrm{round}\big(0.70\,I_{\text{recall}}+0.30\,I_{\text{precision}},\,2\big)\)</td><td class="d">意图召回与范围精确度的加权和<br>不参与排名；\(I_{\text{recall}}\)、\(I_{\text{precision}}\) 无闭式</td></tr>
+
+<tr class="sec"><td colspan="3">效率</td></tr>
+<tr><td class="n">Tok./task</td><td class="t">每题输出词元 + 推理词元</td><td class="d">不含输入词元</td></tr>
+<tr><td class="n">Min./task</td><td class="t">每题实际耗时（分钟）</td><td class="d"></td></tr>
+</table>
+<div class="foot"><span>⋆ Reference：同一评分清单约 78%，参照线而非满分</span><span>来源：SWE-Together 第 2.3 节 · 表 2</span></div>
+</div>
+<script>renderMathInElement(document.body,{delimiters:[{left:"\\(",right:"\\)",display:false}]});</script>
+</body></html>

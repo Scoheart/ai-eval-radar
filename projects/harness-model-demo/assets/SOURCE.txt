@@ -1,0 +1,4 @@
+openai.svg from Simple Icons (https://simpleicons.org/icons/openai)
+npm: simple-icons@v13/icons/openai.svg via jsDelivr
+Brand color #412991 per Simple Icons
+Codex CLI has no separate mark; OpenAI blossom is the accurate brand glyph.

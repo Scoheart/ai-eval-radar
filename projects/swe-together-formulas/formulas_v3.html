@@ -1,0 +1,46 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#F4F5F7}
+body{font-family:Inter,"Noto Sans SC",sans-serif;color:#111827;padding:48px;width:1200px}
+.card{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);padding:44px 52px 36px}
+h1{font-size:26px;font-weight:600;letter-spacing:-.015em}
+.sub{margin-top:8px;font-size:13.5px;color:#6B7280}
+.sub .k{color:#374151}
+table{width:100%;border-collapse:collapse;margin-top:28px}
+td{padding:0 0;vertical-align:middle;height:78px;border-top:1px solid #F0F1F3}
+tr.sec td{height:auto;border-top:none;padding:26px 0 8px;font-size:11px;font-weight:600;letter-spacing:.12em;color:#9CA3AF;text-transform:uppercase}
+tr.sec:first-child td{padding-top:4px}
+tr.sec + tr td{border-top:1px solid #E5E7EB}
+.n{width:210px;font-size:15px;font-weight:600;color:#111827}
+.n small{display:block;font-size:12px;font-weight:400;color:#9CA3AF;margin-top:3px}
+.f{font-size:17.5px;text-align:left;padding-left:8px}
+.d{width:300px;font-size:13px;color:#6B7280;text-align:right;line-height:1.55}
+.hl .n{color:#2563EB}
+.foot{margin-top:26px;padding-top:16px;border-top:1px solid #F0F1F3;display:flex;justify-content:space-between;font-size:12px;color:#9CA3AF}
+</style></head><body><div class="card">
+<h1>SWE-Together 评测公式</h1>
+<div class="sub">任务 \(t\)，第 \(r\) 次运行 · 共 \(N\) 题，每题 \(k=2\) 次 · 通过阈值 \(\tau=0.85\)</div>
+<table>
+<tr class="sec"><td colspan="3">单次运行</td></tr>
+<tr><td class="n">裁判分<small>Judge score</small></td><td class="f">\(\displaystyle j_{t,r}=\sum_g w_g\,\mathbb{I}[\,g\ \text{met}\,]\)</td><td class="d">冻结的加权目标清单，\(\sum_g w_g=1\)</td></tr>
+<tr><td class="n">是否通过<small>Success</small></td><td class="f">\(\displaystyle s_{t,r}=\mathbb{I}[\,j_{t,r}\ge\tau\,]\)</td><td class="d">分数 ≥ 0.85 记为通过</td></tr>
+
+<tr class="sec"><td colspan="3">正确性 · 跨题等权平均</td></tr>
+<tr class="hl"><td class="n">pass@1</td><td class="f">\(\displaystyle \dfrac{1}{N}\sum_t \dfrac{1}{k}\sum_r s_{t,r}\)</td><td class="d">单次跑通的概率</td></tr>
+<tr class="hl"><td class="n">pass²</td><td class="f">\(\displaystyle \dfrac{1}{N}\sum_t \prod_{r=1}^{2} s_{t,r}\)</td><td class="d">两次都通过才算，最严格</td></tr>
+<tr><td class="n">SSR<small>Stable solve rate</small></td><td class="f">\(\displaystyle \dfrac{1}{N}\sum_t \mathbb{I}\big[\tfrac{1}{k}\sum_r j_{t,r}\ge\tau\big]\)</td><td class="d">先平均分数，再卡阈值</td></tr>
+<tr><td class="n">Mean Judge</td><td class="f">\(\displaystyle \dfrac{1}{N}\sum_t \dfrac{1}{k}\sum_r j_{t,r}\)</td><td class="d">不设阈值的平均分</td></tr>
+
+<tr class="sec"><td colspan="3">交互</td></tr>
+<tr class="hl"><td class="n">User Correction<small>越低越好</small></td><td class="f">\(\displaystyle N_{\text{correction}}+0.2\,N_{\text{nudge}}\)</td><td class="d">明确指错计 1，暗示怀疑计 0.2<br>先 k 次内平均，再跨题平均</td></tr>
+<tr><td class="n">Intent Coverage<small>不参与排名</small></td><td class="f">\(\displaystyle \mathrm{round}\big(0.7\,I_{\text{recall}}+0.3\,I_{\text{precision}},\,2\big)\)</td><td class="d">模拟用户是否说全、说准原意图</td></tr>
+</table>
+<div class="foot"><span>\(\mathrm{pass}^2\le\mathrm{pass@1}\) · 三个阈值指标的区别只在 \(k\) 次运行怎么合并</span><span>来源：SWE-Together 论文 §2.3</span></div>
+</div>
+<script>renderMathInElement(document.body,{delimiters:[{left:"\\(",right:"\\)",display:false}]});</script>
+</body></html>

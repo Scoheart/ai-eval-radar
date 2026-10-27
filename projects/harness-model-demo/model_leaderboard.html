@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Model Effectiveness on SWE-Together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+
+:root {
+  --bg: #f3f4f6;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --header: #9ca3af;
+  --sep: #eef0f3;
+  --track: #e8eaed;
+  --row-alt: #f8f9fb;
+  --watermark: #d1d5db;
+  --blue: #2563eb;
+  --blue-hatch: #93c5fd;
+  --ok: #059669;
+  --ok-bg: #ecfdf5;
+  --bad: #dc2626;
+  --bad-bg: #fef2f2;
+  --partial: #d97706;
+  --partial-bg: #fffbeb;
+  --fail: #9ca3af;
+  --fail-bg: #f3f4f6;
+  --pos: #059669;
+  --neg: #dc2626;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 24px 48px;
+  min-height: 100vh;
+}
+
+.page { width: 1160px; max-width: 100%; }
+
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 32px 36px 28px;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.03),
+    0 10px 28px rgba(16, 24, 40, 0.07);
+  border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+.header { margin-bottom: 18px; }
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.swatch {
+  width: 22px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.swatch.solid { background: var(--blue); }
+.swatch.hatch {
+  background: repeating-linear-gradient(
+    -45deg, var(--blue-hatch), var(--blue-hatch) 2px, var(--blue) 2px, var(--blue) 3.5px
+  );
+  border: 1px solid rgba(37, 99, 235, 0.35);
+}
+
+.watermark {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--watermark);
+}
+
+.note {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.skill-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.skill-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.skill-name.baseline { color: var(--muted); font-weight: 400; }
+
+.table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+.table thead th {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--header); padding: 10px 8px 12px; border-bottom: 1px solid var(--sep); white-space: nowrap;
+}
+.table thead th.col-skill { text-align: left; width: 18%; padding-left: 12px; }
+.table thead th.col-bar { text-align: left; width: 42%; }
+.table thead th.col-metric { text-align: center; width: 10%; }
+.table tbody tr { background: #fff; }
+.table tbody tr:nth-child(even) { background: var(--row-alt); }
+.table tbody tr + tr td { border-top: 1px solid var(--sep); }
+.table tbody td { padding: 14px 8px; vertical-align: middle; }
+.table tbody td.col-skill { padding-left: 12px; }
+.bar-wrap { display: flex; align-items: center; gap: 10px; width: 100%; }
+.track {
+  position: relative; flex: 1 1 auto; height: 20px; background: var(--track);
+  border-radius: 999px; overflow: visible;
+}
+.bar-solid {
+  position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px 0 0 999px;
+  display: flex; align-items: center; justify-content: center; z-index: 2;
+}
+.bar-solid.round-full { border-radius: 999px; }
+.bar-hatch { position: absolute; top: 0; height: 100%; z-index: 1; border-radius: 0 999px 999px 0; }
+.pct-in { position: relative; z-index: 3; font-size: 11px; font-weight: 700; color: #fff; }
+.pct-tip { flex: 0 0 auto; min-width: 48px; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.metric { text-align: center; font-size: 13.5px; font-variant-numeric: tabular-nums; font-weight: 400; }
+.metric.empty { color: var(--muted); }
+.metric.best { font-weight: 700; }
+.axis-row td { padding: 6px 8px 0 !important; border-top: none !important; background: transparent !important; }
+.axis { position: relative; height: 22px; margin-right: 58px; }
+.axis-line { position: absolute; left: 0; right: 0; top: 2px; height: 1px; background: #e5e7eb; }
+.axis-tick { position: absolute; top: 0; transform: translateX(-50%); text-align: center; }
+.axis-tick::before { content: ""; display: block; width: 1px; height: 6px; background: #9ca3af; margin: 0 auto 4px; }
+.axis-tick span { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.table thead th.col-skill { width: 16%; }
+.table thead th.col-bar { width: 19%; }
+.table thead th.col-metric { width: 7%; }
+.table thead th.col-metric.wide { width: 9%; }
+.table thead th.col-vs { text-align: center; width: 13%; }
+.axis { margin-right: 0; }
+.vs-agg { display: flex; flex-direction: column; align-items: center; gap: 2px; font-variant-numeric: tabular-nums; }
+.vs-agg .vs-delta { font-size: 13px; font-weight: 600; }
+.vs-agg .vs-delta.pos { color: #059669; }
+.vs-agg .vs-delta.neg { color: #dc2626; }
+.vs-agg .vs-delta.zero, .vs-agg .vs-delta.base { color: var(--muted); font-weight: 500; }
+.vs-agg .vs-ci { font-size: 10.5px; color: var(--muted); font-weight: 400; }
+
+.table thead th, .matrix thead th { text-transform: none; letter-spacing: 0.01em; }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="header">
+        <div class="title">Model Effectiveness on SWE-Together</div>
+        
+        <div class="subtitle">Codex CLI · No Skill · SWE-Together · k = 2 replicates</div>
+        <div class="legend">
+
+          <div class="legend-item"><span class="swatch solid"></span>pass²</div>
+          <div class="legend-item"><span class="swatch hatch"></span>pass@1 − pass²</div>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead><tr>
+          <th class="col-skill">Model</th><th class="col-bar"></th>
+          <th class="col-metric">pass@1 ↑</th><th class="col-metric">SSR ↑</th><th class="col-metric">pass² ↑</th>
+          <th class="col-metric wide">Mean judge ↑</th><th class="col-metric wide">U-Corr ↓</th>
+          <th class="col-metric wide">Tok./task</th><th class="col-metric wide">Min./task</th>
+          <th class="col-vs">vs Baseline</th>
+        </tr></thead>
+        <tbody>
+
+        <tr>
+          <td class="col-skill"><div class="skill-cell">
+            <span class="dot" style="background:#9CA3AF"></span>
+            <span class="skill-name baseline">GPT-6 Luna (baseline)</span>
+          </div></td>
+          <td class="col-bar"><div class="bar-wrap">
+            <div class="track">
+              <div class="bar-hatch" style="left:50.0000%;width:9.3750%;background:repeating-linear-gradient(-45deg,#D1D5DB,#D1D5DB 2px,#9CA3AF 2px,#9CA3AF 3.5px);"></div>
+              <div class="bar-solid" style="width:50.0000%;background:#9CA3AF"></div>
+            </div>
+          </div></td>
+          <td class="col-metric"><div class="metric">47.5%</div></td><td class="col-metric"><div class="metric">45%</div></td><td class="col-metric"><div class="metric">40%</div></td><td class="col-metric"><div class="metric">0.745</div></td><td class="col-metric"><div class="metric">2.21</div></td><td class="col-metric"><div class="metric">43.3k</div></td><td class="col-metric"><div class="metric">24.3</div></td>
+          <td class="col-vs"><div class="vs-agg"><div class="vs-delta base">—</div></div></td>
+        </tr>
+        <tr>
+          <td class="col-skill"><div class="skill-cell">
+            <span class="dot" style="background:#2563EB"></span>
+            <span class="skill-name">Claude Opus 4.5</span>
+          </div></td>
+          <td class="col-bar"><div class="bar-wrap">
+            <div class="track">
+              <div class="bar-hatch" style="left:75.0000%;width:7.8125%;background:repeating-linear-gradient(-45deg,#93C5FD,#93C5FD 2px,#2563EB 2px,#2563EB 3.5px);"></div>
+              <div class="bar-solid" style="width:75.0000%;background:#2563EB"></div>
+            </div>
+          </div></td>
+          <td class="col-metric"><div class="metric best">66.25%</div></td><td class="col-metric"><div class="metric best">60%</div></td><td class="col-metric"><div class="metric best">60%</div></td><td class="col-metric"><div class="metric best">0.811</div></td><td class="col-metric"><div class="metric best">1.98</div></td><td class="col-metric"><div class="metric best">39.6k</div></td><td class="col-metric"><div class="metric">23.7</div></td>
+          <td class="col-vs"><div class="vs-agg"><div class="vs-delta pos">+18.75 pp</div><div class="vs-ci">[0, +37.5]</div></div></td>
+        </tr>
+        <tr>
+          <td class="col-skill"><div class="skill-cell">
+            <span class="dot" style="background:#3B82F6"></span>
+            <span class="skill-name">DeepSeek-V3.2</span>
+          </div></td>
+          <td class="col-bar"><div class="bar-wrap">
+            <div class="track">
+              <div class="bar-hatch" style="left:56.2500%;width:9.3750%;background:repeating-linear-gradient(-45deg,#BFDBFE,#BFDBFE 2px,#3B82F6 2px,#3B82F6 3.5px);"></div>
+              <div class="bar-solid" style="width:56.2500%;background:#3B82F6"></div>
+            </div>
+          </div></td>
+          <td class="col-metric"><div class="metric">52.5%</div></td><td class="col-metric"><div class="metric">50%</div></td><td class="col-metric"><div class="metric">45%</div></td><td class="col-metric"><div class="metric">0.751</div></td><td class="col-metric"><div class="metric">2.19</div></td><td class="col-metric"><div class="metric">42.5k</div></td><td class="col-metric"><div class="metric">24.1</div></td>
+          <td class="col-vs"><div class="vs-agg"><div class="vs-delta pos">+5 pp</div><div class="vs-ci">[-15, +23.75]</div></div></td>
+        </tr>
+        <tr>
+          <td class="col-skill"><div class="skill-cell">
+            <span class="dot" style="background:#60A5FA"></span>
+            <span class="skill-name">Gemini 2.5 Pro</span>
+          </div></td>
+          <td class="col-bar"><div class="bar-wrap">
+            <div class="track">
+              <div class="bar-hatch" style="left:62.5000%;width:9.3750%;background:repeating-linear-gradient(-45deg,#DBEAFE,#DBEAFE 2px,#60A5FA 2px,#60A5FA 3.5px);"></div>
+              <div class="bar-solid" style="width:62.5000%;background:#60A5FA"></div>
+            </div>
+          </div></td>
+          <td class="col-metric"><div class="metric">57.5%</div></td><td class="col-metric"><div class="metric">50%</div></td><td class="col-metric"><div class="metric">50%</div></td><td class="col-metric"><div class="metric">0.749</div></td><td class="col-metric"><div class="metric">2.09</div></td><td class="col-metric"><div class="metric">40.6k</div></td><td class="col-metric"><div class="metric best">23.0</div></td>
+          <td class="col-vs"><div class="vs-agg"><div class="vs-delta pos">+10 pp</div><div class="vs-ci">[-11.25, +31.25]</div></div></td>
+        </tr>
+        <tr class="axis-row"><td></td><td class="col-bar"><div class="axis"><div class="axis-line"></div><div class="axis-tick" style="left:0.0000%"><span>0%</span></div><div class="axis-tick" style="left:25.0000%"><span>20%</span></div><div class="axis-tick" style="left:50.0000%"><span>40%</span></div><div class="axis-tick" style="left:75.0000%"><span>60%</span></div><div class="axis-tick" style="left:100.0000%"><span>80%</span></div></div></td><td colspan="8"></td></tr>
+        </tbody>
+      </table>
+<div class="note">Sorted by Mean judge (paper Table 2) · 95% CI: paired bootstrap over tasks (not in paper)</div>
+      <div class="watermark">Illustrative Data — Not Actual Benchmark Results</div>
+    </div>
+  </div>
+</body>
+</html>

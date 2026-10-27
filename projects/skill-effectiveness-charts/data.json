@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "harness": "Codex CLI",
+    "model": "GPT-6 Luna",
+    "benchmark": "SWE-Together",
+    "k": 2,
+    "illustrative": true,
+    "title": "Skill Effectiveness on SWE-Together",
+    "subtitle": "Fixed Harness & Model \u00b7 Comparing Skill Configurations",
+    "baseline_name": "No Skill",
+    "harness_logo": "logos/openai-blossom.svg"
+  },
+  "skills": [
+    {
+      "name": "No Skill",
+      "pass_at_1": 55.0,
+      "pass_squared": 40.0,
+      "is_baseline": true
+    },
+    {
+      "name": "Workbench Skill",
+      "pass_at_1": 72.5,
+      "pass_squared": 60.0
+    },
+    {
+      "name": "Superpowers Skill",
+      "pass_at_1": 65.0,
+      "pass_squared": 50.0
+    },
+    {
+      "name": "Custom Skill",
+      "pass_at_1": 60.0,
+      "pass_squared": 45.0
+    }
+  ]
+}

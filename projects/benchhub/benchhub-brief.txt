@@ -1,0 +1,7 @@
+产品名：BenchHub（AI Agent 评测配置平台，Web 应用）。左上角品牌名必须是「BenchHub」。
+用途：平台上登记了很多 benchmark（SWE-bench Verified、Terminal-Bench 2.0、AACR-Bench、SWE-Together、BrowseComp、GAIA 等）。用户选一个 bench，再选被测 Agent（Claude Code、Codex、Cursor CLI、OpenCode、Pi、Gemini CLI）和模型，配置参数，平台生成一条一键运行命令（基于 harbor run）或一个可下载的 SKILL.md；用户在本地跑完后结果自动回传平台，平台展示结果。
+请做 3 个页面（顶部导航切换，可点击）：
+1. 「Bench 目录」：卡片网格，每张卡片有 bench 名、版本、类别标签（编码 / 代码审查 / 搜索 / 多轮交互）、任务数、评分方式（执行测试 / 评论匹配 / LLM 裁判 / 模拟用户）、最近一次运行时间。左侧筛选栏按类别和评分方式筛选，顶部搜索。
+2. 「配置运行」：选中 AACR-Bench 后的页面。左侧是表单：Agent 下拉、模型下拉、任务数（全部 / 抽样 50）、每题运行次数 k、并发数、评分参数（行号容差 k=1、裁判模型）。右侧实时生成的结果：两个标签页「命令」和「Skill」。命令标签显示一段可复制的终端命令，如 `harbor run -d aacr-bench@1.0 -a codex -m gpt-5 --n-concurrent 4 --upload`；Skill 标签显示 SKILL.md 预览和下载按钮。底部显示「本地运行后结果会自动回传」。
+3. 「运行结果」：一个运行记录表（bench、agent、模型、状态 运行中/完成/失败、Pass@1 或 precision/recall、耗时、token）；点开一条显示详情：顶部指标卡片，下方按任务的结果列表。
+视觉：简洁、专业的开发者工具风格，参考 Linear 和 Vercel 控制台，浅色为主，留白充足，字体清晰，用一个蓝色强调色，不要渐变和花哨发光。中文界面。数据用合理的示例数据，标注为示例。

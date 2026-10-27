@@ -1,0 +1,23 @@
+Edit ./index.html in place (a single self-contained HTML prototype "BenchHub" with three tab pages: Bench 目录 / 配置运行 / 运行结果, switched via [data-page] tabs and showPage()). Apply EVERY point of the brief below. Hard requirements:
+- Keep the existing Linear-like visual style, CSS variables, colors, typography, component classes (panel, tag, btn, od-stat, etc.). Reuse existing classes; add minimal new CSS in the same style.
+- Chinese UI. Single self-contained HTML file: no external assets, no CDN, no fonts/images/scripts from network.
+- All three tab pages must keep working via tab switching. Additionally, on load read location.hash (#catalog, #config, #results) and call showPage accordingly, so headless screenshots can reach each tab.
+- All numbers are fictional; mark them clearly as 示例数据.
+- Remove the "开始运行" button and any "harbor run ... --upload"/自动回传 wording; the platform only generates config, it does not run anything. The literal string 开始运行 must not appear anywhere in the file.
+- On the results page, show the comparison view (point 3) as a block directly on the run overview page (below the runs table) so it is visible without clicking; also show the result.json validation checklist (point 2) for at least one run directly on the overview (e.g. an expanded "最新上传校验" panel), plus environment info and 仅供参考 badge in the runs table (point 5).
+- Keep the JS free of errors. Do not leave TODOs.
+- Work only on index.html in this directory. Do not run any browser.
+
+BRIEF:
+在当前 BenchHub 原型基础上修改（保持现有 Linear 风格、配色和三页结构不变，界面中文），按以下四点更新，所有数据仍标注为示例数据：
+
+1. 配置运行页：去掉"开始运行"按钮。流程改为：先选 Bench；再选"这次只改哪一项"（自变量单选：skill / model / harness / search / mcp_mode），其余各项自动锁定并以只读锁定样式显示固定值；在自变量下面可添加多个实验组（arm），每组一行，可增删，每题默认跑 2 次（可调）。页面最终产出是三样东西：下载 eval.yaml 按钮、一个可复制的上传 token、一份任务清单的哈希（如 sha256:3f9a…），并显示 eval.yaml 预览。说明文案：平台只生成配置，执行方用任意方式跑完后上传 result.json。
+
+2. 运行结果页：每次运行显示状态"等待执行方上传 / 已上传 / 校验失败"。展示 result.json 的校验结果清单：缺失字段列表、固定项是否与 eval.yaml 一致（逐项对勾/叉）、和任务清单逐条比对的完成率（如 98/100，2 道缺失）。说明：缺失的题和 status: error 的题都按失败计分。完成率与分数并排显示。
+
+3. 对比视图（结果页内一个区块或新标签）：完成率不到 100%、清单哈希不一致、或裁判模型不一致的运行，不能进同一张对比表，灰掉并写明原因。图表按自变量的各实验组分组。SWE-Together 显示 Pass@1、pass²、U-Corr；AACR-Bench 显示 micro 汇总的 precision 和 recall。
+
+4. Bench 目录页：每张卡片按三个维度打标签：交互方式（单轮/多轮/模拟用户）、判分方式（执行测试/评论匹配/LLM 裁判）、环境（Docker/浏览器/终端），并加一个数据污染提示标签（如"可能污染：公开于 2024"）。左侧筛选也按这三个维度。
+再补两点（保持现有风格）：
+5. 运行记录：每次运行显示环境信息（机器配置如 CPU/内存、是否与其他任务并发运行）。每题只跑了一次的运行，标"仅供参考"徽标。
+6. 配置页：增加"明细字段清单"区块并锁进任务清单。SWE-Together 需上传 judge 原始分、n_correction、n_nudge（不提前换算成过/不过）；AACR-Bench 需上传 tp、fp、fn。结果页按这份字段清单校验，并注明"所有指标由平台用明细重算"。

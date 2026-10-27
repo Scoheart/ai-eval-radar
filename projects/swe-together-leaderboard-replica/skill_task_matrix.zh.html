@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Per-Task Outcomes on SWE-Together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+
+:root {
+  --bg: #f3f4f6;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --header: #9ca3af;
+  --sep: #eef0f3;
+  --track: #e8eaed;
+  --row-alt: #f8f9fb;
+  --watermark: #d1d5db;
+  --blue: #2563eb;
+  --blue-hatch: #93c5fd;
+  --ok: #059669;
+  --ok-bg: #ecfdf5;
+  --bad: #dc2626;
+  --bad-bg: #fef2f2;
+  --partial: #d97706;
+  --partial-bg: #fffbeb;
+  --fail: #9ca3af;
+  --fail-bg: #f3f4f6;
+  --pos: #059669;
+  --neg: #dc2626;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 24px 48px;
+  min-height: 100vh;
+}
+
+.page { width: 1160px; max-width: 100%; }
+
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 32px 36px 28px;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.03),
+    0 10px 28px rgba(16, 24, 40, 0.07);
+  border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+.header { margin-bottom: 18px; }
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+.brand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 16px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+}
+.brand-chip .brand-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex-shrink: 0;
+  transform: none;
+}
+.brand-chip img.brand-icon { object-fit: contain; border-radius: 3px; }
+.brand-chip .brand-label {
+  display: block;
+  padding: 0;
+  line-height: 16px;
+}
+.brand-sep { color: #d1d5db; font-weight: 400; }
+.brand-rest { color: var(--muted); font-weight: 400; font-size: 13px; }
+
+
+.legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.swatch {
+  width: 22px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.swatch.solid { background: var(--blue); }
+.swatch.hatch {
+  background: repeating-linear-gradient(
+    -45deg, var(--blue-hatch), var(--blue-hatch) 2px, var(--blue) 2px, var(--blue) 3.5px
+  );
+  border: 1px solid rgba(37, 99, 235, 0.35);
+}
+
+.watermark {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--watermark);
+}
+
+.note {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.skill-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.skill-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.skill-name.baseline { color: var(--muted); font-weight: 400; }
+
+.matrix-scroll { width: 100%; overflow-x: auto; border: 1px solid var(--sep); border-radius: 12px; }
+.matrix { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 980px; }
+.matrix thead th {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--header); padding: 10px 4px; border-bottom: 1px solid var(--sep); background: #fff;
+}
+.matrix thead th.sticky-col {
+  text-align: left; padding-left: 14px; min-width: 150px; position: sticky; left: 0; z-index: 3; background: #fff;
+}
+.matrix thead th.task-col { text-align: center; min-width: 28px; width: 28px; font-size: 9px; color: #b0b5bd; }
+.matrix thead th.summary { text-align: center; min-width: 72px; border-left: 1px solid var(--sep); }
+.matrix tbody tr { background: #fff; }
+.matrix tbody tr:nth-child(even) { background: var(--row-alt); }
+.matrix tbody tr:nth-child(even) td.sticky-col { background: var(--row-alt); }
+.matrix tbody tr + tr td { border-top: 1px solid var(--sep); }
+.matrix tbody td { padding: 8px 3px; vertical-align: middle; text-align: center; }
+.matrix tbody td.sticky-col {
+  text-align: left; padding: 10px 14px; position: sticky; left: 0; z-index: 1; background: #fff;
+  border-right: 1px solid var(--sep);
+}
+.matrix tbody td.summary {
+  border-left: 1px solid var(--sep); font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.cell-mark { display: inline-flex; flex-direction: column; align-items: center; min-height: 28px; justify-content: center; }
+.cell-mark .runs { display: inline-flex; gap: 2px; font-size: 11px; font-weight: 700; }
+.cell-mark .runs .y { color: var(--ok); }
+.cell-mark .runs .n { color: #d1d5db; }
+.summary-sub { display: block; font-size: 10px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+.chip {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 18px;
+  padding: 0 6px; border-radius: 6px; font-size: 10px; font-weight: 700;
+}
+.chip.both { background: #ecfdf5; color: #059669; }
+.chip.one { background: #fffbeb; color: #d97706; }
+.chip.none { background: #f3f4f6; color: #9ca3af; }
+
+.table thead th, .matrix thead th { text-transform: none; letter-spacing: 0.01em; }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="header">
+        <div class="title">Per-Task Outcomes on SWE-Together</div>
+        
+        <div class="subtitle"><span class="brand-chip"><svg class="brand-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="256" height="260" preserveAspectRatio="xMidYMid" viewBox="0 0 256 260"><path d="M239.184 106.203a64.716 64.716 0 0 0-5.576-53.103C219.452 28.459 191 15.784 163.213 21.74A65.586 65.586 0 0 0 52.096 45.22a64.716 64.716 0 0 0-43.23 31.36c-14.31 24.602-11.061 55.634 8.033 76.74a64.665 64.665 0 0 0 5.525 53.102c14.174 24.65 42.644 37.324 70.446 31.36a64.72 64.72 0 0 0 48.754 21.744c28.481.025 53.714-18.361 62.414-45.481a64.767 64.767 0 0 0 43.229-31.36c14.137-24.558 10.875-55.423-8.083-76.483Zm-97.56 136.338a48.397 48.397 0 0 1-31.105-11.255l1.535-.87 51.67-29.825a8.595 8.595 0 0 0 4.247-7.367v-72.85l21.845 12.636c.218.111.37.32.409.563v60.367c-.056 26.818-21.783 48.545-48.601 48.601Zm-104.466-44.61a48.345 48.345 0 0 1-5.781-32.589l1.534.921 51.722 29.826a8.339 8.339 0 0 0 8.441 0l63.181-36.425v25.221a.87.87 0 0 1-.358.665l-52.335 30.184c-23.257 13.398-52.97 5.431-66.404-17.803ZM23.549 85.38a48.499 48.499 0 0 1 25.58-21.333v61.39a8.288 8.288 0 0 0 4.195 7.316l62.874 36.272-21.845 12.636a.819.819 0 0 1-.767 0L41.353 151.53c-23.211-13.454-31.171-43.144-17.804-66.405v.256Zm179.466 41.695-63.08-36.63L161.73 77.86a.819.819 0 0 1 .768 0l52.233 30.184a48.6 48.6 0 0 1-7.316 87.635v-61.391a8.544 8.544 0 0 0-4.4-7.213Zm21.742-32.69-1.535-.922-51.619-30.081a8.39 8.39 0 0 0-8.492 0L99.98 99.808V74.587a.716.716 0 0 1 .307-.665l52.233-30.133a48.652 48.652 0 0 1 72.236 50.391v.205ZM88.061 139.097l-21.845-12.585a.87.87 0 0 1-.41-.614V65.685a48.652 48.652 0 0 1 79.757-37.346l-1.535.87-51.67 29.825a8.595 8.595 0 0 0-4.246 7.367l-.051 72.697Zm11.868-25.58 28.138-16.217 28.188 16.218v32.434l-28.086 16.218-28.188-16.218-.052-32.434Z"/></svg><span class="brand-label">Codex CLI</span></span><span class="brand-sep">·</span><span class="brand-chip"><svg class="brand-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="256" height="260" preserveAspectRatio="xMidYMid" viewBox="0 0 256 260"><path d="M239.184 106.203a64.716 64.716 0 0 0-5.576-53.103C219.452 28.459 191 15.784 163.213 21.74A65.586 65.586 0 0 0 52.096 45.22a64.716 64.716 0 0 0-43.23 31.36c-14.31 24.602-11.061 55.634 8.033 76.74a64.665 64.665 0 0 0 5.525 53.102c14.174 24.65 42.644 37.324 70.446 31.36a64.72 64.72 0 0 0 48.754 21.744c28.481.025 53.714-18.361 62.414-45.481a64.767 64.767 0 0 0 43.229-31.36c14.137-24.558 10.875-55.423-8.083-76.483Zm-97.56 136.338a48.397 48.397 0 0 1-31.105-11.255l1.535-.87 51.67-29.825a8.595 8.595 0 0 0 4.247-7.367v-72.85l21.845 12.636c.218.111.37.32.409.563v60.367c-.056 26.818-21.783 48.545-48.601 48.601Zm-104.466-44.61a48.345 48.345 0 0 1-5.781-32.589l1.534.921 51.722 29.826a8.339 8.339 0 0 0 8.441 0l63.181-36.425v25.221a.87.87 0 0 1-.358.665l-52.335 30.184c-23.257 13.398-52.97 5.431-66.404-17.803ZM23.549 85.38a48.499 48.499 0 0 1 25.58-21.333v61.39a8.288 8.288 0 0 0 4.195 7.316l62.874 36.272-21.845 12.636a.819.819 0 0 1-.767 0L41.353 151.53c-23.211-13.454-31.171-43.144-17.804-66.405v.256Zm179.466 41.695-63.08-36.63L161.73 77.86a.819.819 0 0 1 .768 0l52.233 30.184a48.6 48.6 0 0 1-7.316 87.635v-61.391a8.544 8.544 0 0 0-4.4-7.213Zm21.742-32.69-1.535-.922-51.619-30.081a8.39 8.39 0 0 0-8.492 0L99.98 99.808V74.587a.716.716 0 0 1 .307-.665l52.233-30.133a48.652 48.652 0 0 1 72.236 50.391v.205ZM88.061 139.097l-21.845-12.585a.87.87 0 0 1-.41-.614V65.685a48.652 48.652 0 0 1 79.757-37.346l-1.535.87-51.67 29.825a8.595 8.595 0 0 0-4.246 7.367l-.051 72.697Zm11.868-25.58 28.138-16.217 28.188 16.218v32.434l-28.086 16.218-28.188-16.218-.052-32.434Z"/></svg><span class="brand-label">GPT-6 Luna</span></span><span class="brand-sep">·</span><span class="brand-chip"><svg class="brand-icon" aria-hidden="true" viewBox="0 0 296 298" xmlns="http://www.w3.org/2000/svg" width="296" height="298" fill="none"><mask id="igemini_a" width="296" height="298" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha"><path fill="#3186FF" d="M141.201 4.886c2.282-6.17 11.042-6.071 13.184.148l5.985 17.37a184.004 184.004 0 0 0 111.257 113.049l19.304 6.997c6.143 2.227 6.156 10.91.02 13.155l-19.35 7.082a184.001 184.001 0 0 0-109.495 109.385l-7.573 20.629c-2.241 6.105-10.869 6.121-13.133.025l-7.908-21.296a184 184 0 0 0-109.02-108.658l-19.698-7.239c-6.102-2.243-6.118-10.867-.025-13.132l20.083-7.467A183.998 183.998 0 0 0 133.291 26.28l7.91-21.394Z"/></mask><g mask="url(#igemini_a)"><g filter="url(#igemini_b)"><ellipse cx="163" cy="149" fill="#3689FF" rx="196" ry="159"/></g><g filter="url(#igemini_c)"><ellipse cx="33.5" cy="142.5" fill="#F6C013" rx="68.5" ry="72.5"/></g><g filter="url(#igemini_d)"><ellipse cx="19.5" cy="148.5" fill="#F6C013" rx="68.5" ry="72.5"/></g><g filter="url(#igemini_e)"><path fill="#FA4340" d="M194 10.5C172 82.5 65.5 134.333 22.5 135L144-66l50 76.5Z"/></g><g filter="url(#igemini_f)"><path fill="#FA4340" d="M190.5-12.5C168.5 59.5 62 111.333 19 112L140.5-89l50 76.5Z"/></g><g filter="url(#igemini_g)"><path fill="#14BB69" d="M194.5 279.5C172.5 207.5 66 155.667 23 155l121.5 201 50-76.5Z"/></g><g filter="url(#igemini_h)"><path fill="#14BB69" d="M196.5 320.5C174.5 248.5 68 196.667 25 196l121.5 201 50-76.5Z"/></g></g><defs><filter id="igemini_b" width="464" height="390" x="-69" y="-46" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="18"/></filter><filter id="igemini_c" width="265" height="273" x="-99" y="6" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="32"/></filter><filter id="igemini_d" width="265" height="273" x="-113" y="12" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="32"/></filter><filter id="igemini_e" width="299.5" height="329" x="-41.5" y="-130" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="32"/></filter><filter id="igemini_f" width="299.5" height="329" x="-45" y="-153" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="32"/></filter><filter id="igemini_g" width="299.5" height="329" x="-41" y="91" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="32"/></filter><filter id="igemini_h" width="299.5" height="329" x="-39" y="132" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_69_17998" stdDeviation="32"/></filter></defs></svg><span class="brand-label">User sim · Gemini 3.1 Pro</span></span><span class="brand-sep">·</span><span class="brand-rest">SWE-Together · k = 2 次复现</span></div>
+        <div class="legend">
+
+          <div class="legend-item"><span class="chip both">✓✓</span>两次复现均通过（pass²）</div>
+          <div class="legend-item"><span class="chip one">✓✗</span>仅一次复现通过</div>
+          <div class="legend-item"><span class="chip none">✗✗</span>两次复现均未通过</div>
+        </div>
+      </div>
+
+      <div class="matrix-scroll"><table class="matrix">
+        <thead><tr>
+          <th class="sticky-col">技能</th><th class="task-col" title="Task 01">01</th><th class="task-col" title="Task 02">02</th><th class="task-col" title="Task 03">03</th><th class="task-col" title="Task 04">04</th><th class="task-col" title="Task 05">05</th><th class="task-col" title="Task 06">06</th><th class="task-col" title="Task 07">07</th><th class="task-col" title="Task 08">08</th><th class="task-col" title="Task 09">09</th><th class="task-col" title="Task 10">10</th><th class="task-col" title="Task 11">11</th><th class="task-col" title="Task 12">12</th><th class="task-col" title="Task 13">13</th><th class="task-col" title="Task 14">14</th><th class="task-col" title="Task 15">15</th><th class="task-col" title="Task 16">16</th><th class="task-col" title="Task 17">17</th><th class="task-col" title="Task 18">18</th><th class="task-col" title="Task 19">19</th><th class="task-col" title="Task 20">20</th><th class="task-col" title="Task 21">21</th><th class="task-col" title="Task 22">22</th><th class="task-col" title="Task 23">23</th><th class="task-col" title="Task 24">24</th><th class="task-col" title="Task 25">25</th><th class="task-col" title="Task 26">26</th><th class="task-col" title="Task 27">27</th><th class="task-col" title="Task 28">28</th><th class="task-col" title="Task 29">29</th><th class="task-col" title="Task 30">30</th><th class="task-col" title="Task 31">31</th><th class="task-col" title="Task 32">32</th><th class="task-col" title="Task 33">33</th><th class="task-col" title="Task 34">34</th><th class="task-col" title="Task 35">35</th><th class="task-col" title="Task 36">36</th><th class="task-col" title="Task 37">37</th><th class="task-col" title="Task 38">38</th><th class="task-col" title="Task 39">39</th><th class="task-col" title="Task 40">40</th>
+          <th class="summary">pass²</th><th class="summary">pass@1</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td class="sticky-col"><div class="skill-cell">
+            <span class="dot" style="background:#9CA3AF"></span>
+            <span class="skill-name baseline">No Skill（基线）</span>
+          </div></td>
+          <td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td>
+          <td class="summary">40%<span class="summary-sub">pass²</span></td>
+          <td class="summary">47.5%<span class="summary-sub">pass@1</span></td>
+        </tr>
+        <tr>
+          <td class="sticky-col"><div class="skill-cell">
+            <span class="dot" style="background:#2563EB"></span>
+            <span class="skill-name">Workbench</span>
+          </div></td>
+          <td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td>
+          <td class="summary">60%<span class="summary-sub">pass²</span></td>
+          <td class="summary">66.25%<span class="summary-sub">pass@1</span></td>
+        </tr>
+        <tr>
+          <td class="sticky-col"><div class="skill-cell">
+            <span class="dot" style="background:#3B82F6"></span>
+            <span class="skill-name">Custom</span>
+          </div></td>
+          <td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td>
+          <td class="summary">45%<span class="summary-sub">pass²</span></td>
+          <td class="summary">52.5%<span class="summary-sub">pass@1</span></td>
+        </tr>
+        <tr>
+          <td class="sticky-col"><div class="skill-cell">
+            <span class="dot" style="background:#60A5FA"></span>
+            <span class="skill-name">Superpowers</span>
+          </div></td>
+          <td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="y">✓</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="one"><div class="runs"><span class="n">✗</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="both"><div class="runs"><span class="y">✓</span><span class="y">✓</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td><td><div class="cell-mark" title="none"><div class="runs"><span class="n">✗</span><span class="n">✗</span></div></div></td>
+          <td class="summary">50%<span class="summary-sub">pass²</span></td>
+          <td class="summary">57.5%<span class="summary-sub">pass@1</span></td>
+        </tr></tbody>
+      </table></div>
+<div class="note">可选总览。单任务明细请用 <code>python3 render_html.py --task T01 --lang zh</code>。</div>
+      <div class="watermark">演示数据 — 非真实评测结果</div>
+    </div>
+  </div>
+</body>
+</html>
