@@ -43,6 +43,7 @@ Skill（SKILL.md）评测的相关来源，一行一条，格式是「标题 描
 - **skill-evaluator（materials-simulation-skills）** 脚本检查、触发、质量三层方法论 【GitHub：https://github.com/heshamfs/materials-simulation-skills】
 - **skill-eval-runner（ser）** 像 pytest 一样跑 SKILL.md，断言文件、输出、退出码和 token 用量，输出 JUnit 与 GitHub Actions 报告 【GitHub：https://github.com/balyakin/skill-eval-runner】
 - **Cultivar（Pinecone）** 开发、写测试、评分 Skill，可在 Modal 沙箱里跨 Agent 并行跑 【GitHub：https://github.com/pinecone-io/cultivar；Reddit：https://www.reddit.com/r/AgentSkills/comments/1ucuonx/cultivar_a_tool_to_test_skills_run_them_across/】
+- **skill-eval-harness** 测 Skill 的因果提升：同用例、同模型有无对比，带 tune/holdout 拆分和答案泄漏检查 【GitHub：https://github.com/adewale/skill-eval-harness】
 - **upskill（Hugging Face）** 用 trace 生成 Skill 并评测，支持多模型基准 【GitHub：https://github.com/huggingface/upskill】
 
 ## 五、官方文章与实践指南
