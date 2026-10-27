@@ -3,12 +3,11 @@
 Skill（SKILL.md）评测的相关来源，一行一条，格式是「标题 描述 【平台：链接；平台：链接】」，同一条有多个平台就在同一个【】里用分号分隔，链接都核对过能打开。每条的要点和摘要在本仓库 `topics/eval/`、`related/skills/` 的同日期文件里。
 
 ## 一、Skill 有没有用
-- **SkillsBench 1.1** 带与不带 Skill 配对实跑，平均通过率 33.9% → 50.5%，13 个任务负提升 【官网：https://www.skillsbench.ai/blogs/skillsbench-1-1；arXiv：https://arxiv.org/abs/2602.12670；Hugging Face 数据集：https://huggingface.co/datasets/benchflow/skillsbench；Hugging Face 榜单：https://huggingface.co/datasets/benchflow/skillsbench-leaderboard】
+- **SkillsBench 1.1** 带与不带 Skill 配对实跑，平均通过率 33.9% → 50.5%，13 个任务负提升 【官网：https://www.skillsbench.ai/blogs/skillsbench-1-1】
 - **TestJack** 重审 SkillsBench 等基准的通过轨迹，推翻 34.4% 假阳性 【arXiv：https://arxiv.org/abs/2610.10619】
 - **HPCAgent-Bench** Agent、Harness、Skill 单变量受控对比 【arXiv：https://arxiv.org/abs/2610.20673；GitHub：https://github.com/spcl/HPCAgent-Bench】
 - **Dialpad 客服 Skill 评测** 规则检查与 LLM 裁判结果差距大 【arXiv：https://arxiv.org/abs/2610.14346】
 - **legal-ai-errata** 法律基准、Skill 与模板的公开勘误登记 【GitHub：https://github.com/1331labs/legal-ai-errata】
-- **Tessl Skills Evaluation Dataset** 1,110 个任务、608 个 Skill、148 个 GitHub 仓库，单 Skill 与多 Skill 组合两类，带两份 LLM 裁判评分表 【Hugging Face 数据集：https://huggingface.co/datasets/tesslio/task-evals-for-skills】
 - **SkillsBench 论文与榜单** 87 个任务、18 个模型与 Harness 组合，平均通过率 33.9% → 50.5%；榜单覆盖 25 个配置（24 组有无对比）并附 Skill 调用率 【arXiv：https://arxiv.org/abs/2602.12670；排行榜：https://skillsbench.ai/leaderboard；Hugging Face：https://huggingface.co/datasets/benchflow/skillsbench】
 - **Tessl：大规模评测 Agent Skills 的框架** 500 个真实 Skill 派生 1,000 个任务，19 个 Agent 与模型配置，按指令遵循和目标完成两套 LLM 裁判评分；数据集含 1,110 个任务（851 单 Skill、259 多 Skill） 【arXiv：https://arxiv.org/abs/2606.17819；Hugging Face：https://huggingface.co/datasets/tesslio/task-evals-for-skills】
 - **OpenSkillEval** 审计社区 Skill 包：5 类场景、677 个用例、30 个 Skill 包，对照 no-skill 基线并记录 token 与耗时成本 【Hugging Face：https://huggingface.co/datasets/jhying/OpenSkillEval】
@@ -38,7 +37,6 @@ Skill（SKILL.md）评测的相关来源，一行一条，格式是「标题 描
 - **Skillmark** 公开排行榜 【官网：https://skillmark.sh】
 - **skillbench（boheling）** 有无 Skill 对抗基准，同一份确定性脚本评分，另含安全静态扫描 【GitHub：https://github.com/boheling/skillbench】
 - **skilljack-evals** SkillsBench 风格任务包，真实 agent 跑，带 pass@k、Skill Lift、调用率，可按阈值卡 CI 【GitHub：https://github.com/olaservo/skilljack-evals】
-- **skill-eval-harness** 度量 Skill 的因果提升，含防答案泄漏检查与 holdout 切分 【GitHub：https://github.com/adewale/skill-eval-harness】
 - **sample-agent-skill-eval（AWS）** 安全、质量、触发可靠性、成本效率四个维度，带回归基线 【GitHub：https://github.com/aws-samples/sample-agent-skill-eval】
 - **agent-skills evals（Addy Osmani）** 结构校验、触发与路由、行为三层评测 【GitHub：https://github.com/addyosmani/agent-skills/blob/main/evals/README.md】
 - **agent-harness 的 skill-evals** 触发评测与质量评测的格式和评分方法 【GitHub：https://github.com/Phoenixrr2113/agent-harness/blob/main/docs/skill-evals.md】
@@ -46,7 +44,6 @@ Skill（SKILL.md）评测的相关来源，一行一条，格式是「标题 描
 - **skill-eval-runner（ser）** 像 pytest 一样跑 SKILL.md，断言文件、输出、退出码和 token 用量，输出 JUnit 与 GitHub Actions 报告 【GitHub：https://github.com/balyakin/skill-eval-runner】
 - **Cultivar（Pinecone）** 开发、写测试、评分 Skill，可在 Modal 沙箱里跨 Agent 并行跑 【GitHub：https://github.com/pinecone-io/cultivar；Reddit：https://www.reddit.com/r/AgentSkills/comments/1ucuonx/cultivar_a_tool_to_test_skills_run_them_across/】
 - **upskill（Hugging Face）** 用 trace 生成 Skill 并评测，支持多模型基准 【GitHub：https://github.com/huggingface/upskill】
-- **skill-eval-harness** 测 Skill 的因果提升：同用例、同模型有无对比，带 tune/holdout 拆分和答案泄漏检查 【GitHub：https://github.com/adewale/skill-eval-harness】
 
 ## 五、官方文章与实践指南
 - **OpenAI：用 evals 系统化测试 Agent Skills** 【官网：https://developers.openai.com/blog/eval-skills】
@@ -56,7 +53,6 @@ Skill（SKILL.md）评测的相关来源，一行一条，格式是「标题 描
 - **Anthropic：把子 Agent 折叠进单 Agent 加 Skills** 【官网：https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop；GitHub：https://github.com/anthropics/single-agent-loop-kit】
 - **UiPath/skills** 把触发当二分类评测 【GitHub：https://github.com/UiPath/skills】
 - **Agent Skills 标准捐给 Agentic AI Foundation** 据 X 上的 ClaudeDevs 【X：https://x.com/ClaudeDevs/status/2113328526413996100】
-- **OpenHands：How to Evaluate Agent Skills** 有无 Skill 基线加确定性验证，再用 trace 解释失败 【官网：https://www.openhands.dev/blog/evaluating-agent-skills】
 - **Agent Skills 规范：优化技能描述** 官方给的触发评测方法，约 20 条查询各跑 3 次，触发率阈值 0.5 【官网：https://agentskills.io/skill-creation/optimizing-descriptions】
 - **掘金：Agent Skill Eval，从触发信号到 A/B 基准** 把 Skill 做成可回归的工程单元 【掘金：https://juejin.cn/post/7654922935040229391】
 - **Richard's Page：Agent Skill 的评测工程实践** 用例区分度、验证条件拆细、结果与过程两类断言 【博客：https://richardwang.me/docs/ai/applications/building-skill-evaluation-framework】
